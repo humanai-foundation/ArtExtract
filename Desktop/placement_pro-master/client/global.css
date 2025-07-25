@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Tailwind CSS theme
+   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
+   * A different format will require also updating the theme in tailwind.config.ts.
+  */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 258 90% 66%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 258 90% 66%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Placement Pro brand colors - Blue to Violet gradient */
+    --brand-50: 258 100% 97%;
+    --brand-100: 258 96% 93%;
+    --brand-200: 258 95% 87%;
+    --brand-300: 258 93% 79%;
+    --brand-400: 258 90% 66%;
+    --brand-500: 258 89% 58%;
+    --brand-600: 258 89% 50%;
+    --brand-700: 258 88% 42%;
+    --brand-800: 258 84% 34%;
+    --brand-900: 258 76% 29%;
+    --brand-950: 258 69% 19%;
+
+    /* Violet accent colors */
+    --violet-50: 270 100% 98%;
+    --violet-100: 269 100% 95%;
+    --violet-200: 269 100% 92%;
+    --violet-300: 269 97% 85%;
+    --violet-400: 270 95% 75%;
+    --violet-500: 270 91% 65%;
+    --violet-600: 271 81% 56%;
+    --violet-700: 272 72% 47%;
+    --violet-800: 272 69% 39%;
+    --violet-900: 273 67% 32%;
+    --violet-950: 274 66% 21%;
+  }
+
+  .dark {
+    --background: 258 50% 6%;
+    --foreground: 258 50% 90%;
+
+    --card: 258 50% 8%;
+    --card-foreground: 258 50% 90%;
+
+    --popover: 258 50% 8%;
+    --popover-foreground: 258 50% 90%;
+
+    --primary: 258 90% 66%;
+    --primary-foreground: 258 50% 6%;
+
+    --secondary: 258 30% 14%;
+    --secondary-foreground: 258 50% 90%;
+
+    --muted: 258 30% 14%;
+    --muted-foreground: 258 20% 65%;
+
+    --accent: 258 30% 14%;
+    --accent-foreground: 258 50% 90%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 258 50% 90%;
+
+    --border: 258 30% 18%;
+    --input: 258 30% 18%;
+    --ring: 258 90% 66%;
+
+    --sidebar-background: 258 50% 6%;
+    --sidebar-foreground: 258 50% 90%;
+    --sidebar-primary: 258 90% 66%;
+    --sidebar-primary-foreground: 258 50% 6%;
+    --sidebar-accent: 258 30% 14%;
+    --sidebar-accent-foreground: 258 50% 90%;
+    --sidebar-border: 258 30% 18%;
+    --sidebar-ring: 258 90% 66%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
