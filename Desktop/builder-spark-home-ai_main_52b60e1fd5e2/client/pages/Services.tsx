@@ -1,0 +1,24 @@
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+
+export default function Services() {
+  return (
+    <>
+      <Navigation />
+      <div className="min-h-screen pt-20 bg-gradient-to-br from-gray-50 to-brand-50/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-6">
+              Our Services
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              This page is coming soon. We'll showcase our core services with
+              icons, descriptions, and detailed information here.
+            </p>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
+}
