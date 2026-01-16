@@ -1,0 +1,16 @@
+# --- Web Framework & Server ---
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+groq
+PyMuPDF
+pytesseract
+Pillow
+scikit-learn
+spacy
+nltk
+python-dotenv
+pdfplumber
+openai
+uvicorn
