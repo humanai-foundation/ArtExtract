@@ -2,6 +2,7 @@ import os
 import torch
 import warnings
 warnings.filterwarnings("ignore")
+import argparse
 
 from utils.visualization import extract_hidden_art
 from utils.data_graph import load_inference_datasets
@@ -24,7 +25,16 @@ def main():
     ).to(device)
     
     # Load pre-trained model weights
-    model.load_state_dict(torch.load('./checkpoints/GAT/best_model.pth', map_location=device))
+    checkpoint_path = args.checkpoint
+
+    if not os.path.exists(checkpoint_path):
+        raise FileNotFoundError(
+            f"Checkpoint not found: {checkpoint_path}. "
+            "Please train the model first."
+        )
+
+    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
+    model.eval()
     
     # Load validation dataset
     import argparse
