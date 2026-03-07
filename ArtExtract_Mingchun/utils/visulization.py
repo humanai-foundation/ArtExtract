@@ -21,8 +21,12 @@ def overlay_node(image, segments, node_importance, alpha=0.5, cmap='jet'):
     for node_idx, importance in enumerate(node_importance):
         heatmap[segments == node_idx] = importance
 
-    # Normalize the heatmap to [0, 1] range
-    heatmap_norm = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min() + 1e-8)
+    #Improve numerical stability in heatmap normalization
+    denom = heatmap.max() - heatmap.min()
+    if denom < 1e-8:
+        heatmap_norm = np.zeros_like(heatmap)
+    else:
+        heatmap_norm = (heatmap - heatmap.min()) / denom
 
     # Transform heatmap to RGB using the specified colormap
     cmap_func = plt.get_cmap(cmap)

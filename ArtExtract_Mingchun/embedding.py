@@ -103,7 +103,7 @@ def build_dataset(images_dir, transform_img=None,
     return ds, in_channels
 
 def extract_embeddings(encoder, dataset, batch_size=64, device='cuda'):
-    loader = GeoDataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
+    loader = GeoDataLoader(dataset, batch_size=batch_size, shuffle=False, num_workers = min(4, os.cpu_count()), pin_memory=True)
     encoder.eval().to(device)
     all_embs = []
     all_filenames = []
