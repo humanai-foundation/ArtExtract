@@ -21,8 +21,12 @@ def overlay_node(image, segments, node_importance, alpha=0.5, cmap='jet'):
     for node_idx, importance in enumerate(node_importance):
         heatmap[segments == node_idx] = importance
 
-    # Normalize the heatmap to [0, 1] range
-    heatmap_norm = (heatmap - heatmap.min()) / (heatmap.max() - heatmap.min() + 1e-8)
+    #Improve numerical stability in heatmap normalization
+    denom = heatmap.max() - heatmap.min()
+    if denom < 1e-8:
+        heatmap_norm = np.zeros_like(heatmap)
+    else:
+        heatmap_norm = (heatmap - heatmap.min()) / denom
 
     # Transform heatmap to RGB using the specified colormap
     cmap_func = plt.get_cmap(cmap)
@@ -38,6 +42,20 @@ def overlay_node(image, segments, node_importance, alpha=0.5, cmap='jet'):
     overlay = np.clip(overlay, 0, 1)
 
     return overlay
+
+def save_overlay(image, heatmap, save_path):
+    """
+    Save an overlay visualization of the heatmap on the image.
+    Useful for inspecting hidden structures detected by the model.
+    """
+
+    plt.figure(figsize=(6, 6))
+    plt.imshow(image)
+    plt.imshow(heatmap, cmap="jet", alpha=0.5)
+    plt.axis("off")
+
+    plt.savefig(save_path)
+    plt.close()
 
 def extract_hidden_art(model, data_loader, device, save_dir=None, mode='diff', alpha=0.5):
     """Extract hidden art features from the model and visualize them.

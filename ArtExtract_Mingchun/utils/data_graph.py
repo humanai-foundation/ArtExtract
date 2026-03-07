@@ -55,7 +55,11 @@ class GraphSiameseDataset(Dataset):
         # --------RGB image--------
         img_name = self.images[idx]
         img_path = os.path.join(self.images_dir, img_name)
-        image = Image.open(img_path).convert('RGB')
+        image = Image.open(path)
+
+        # convert grayscale images to RGB
+        if image.mode != "RGB":
+            image = image.convert("RGB")
         if self.transform_img:
             image = self.transform_img(image) # (C, H, W)
         if isinstance(image, torch.Tensor):
@@ -68,7 +72,7 @@ class GraphSiameseDataset(Dataset):
         # --------Masks--------
         mask_names = self.masks[img_name]
         mask_datas = []
-        for mask_name in tqdm(mask_names):
+        for mask_name in mask_names:
             mask_path = os.path.join(self.masks_dir, mask_name)
             mask = Image.open(mask_path)
             if mask.mode == 'I;16':
@@ -195,7 +199,10 @@ class InferenceDataset(Dataset):
     def __getitem__(self, idx):
         img_name = self.images[idx]
         img_path = os.path.join(self.images_dir, img_name)
-        image = Image.open(img_path).convert('RGB')
+        try:
+            image = Image.open(img_path).convert('RGB')
+        except Exception as e:
+            raise RuntimeError(f"Failed to load image: {img_path}") from e
         if self.transform_img:
             image = self.transform_img(image)
         if isinstance(image, torch.Tensor):
@@ -258,3 +265,4 @@ def load_inference_datasets(val_path, batch_size):
 
     val_loader = DataLoader(val_dataset, batch_size, shuffle=False, collate_fn=inference_collate_fn)
     return val_loader
+
