@@ -1,6 +1,8 @@
 import os, glob
 import numpy as np
 import torch
+import json
+from sklearn.metrics.pairwise import cosine_similarity
 import warnings
 warnings.filterwarnings('ignore', category=RuntimeWarning)
 
@@ -26,9 +28,19 @@ class RGBGraphDataset(Dataset):
             files.extend(glob.glob(os.path.join(images_dir, p), recursive=True))
         self.images = sorted(files)
 
-        if len(self.images) == 0:
+        if len(self.images)==0:
             raise ValueError(f"No images found under {images_dir} (extensions={ALLOWED_EXTS})")
 
+        # --- Dataset integrity check ---
+        valid_images = []
+        for path in self.images:
+            try:
+                Image.open(path).verify()
+                valid_images.append(path)
+            except Exception:
+                print(f"Skipping corrupted image: {path}")
+
+        self.images = valid_images
         sample = Image.open(self.images[0]).convert('RGB')
         if self.transform_img:
             sample = self.transform_img(sample)
@@ -123,8 +135,53 @@ def extract_embeddings(encoder, dataset, batch_size=64, device='cuda'):
     ids = np.array(all_filenames)
 
     np.save('./embedding/embeddings.npy', X)
-    np.savetxt('./embedding/ids.csv', ids, fmt='%s', delimiter=',')
-    return X, ids
+
+    metadata = {
+        "num_embeddings": X.shape[0],
+        "embedding_dim": X.shape[1]
+    }
+
+    with open("./embedding/meta.json","w") as f:
+        json.dump(metadata,f)
+
+def find_similar_embeddings(query_embedding, embeddings, top_k=5):
+    """
+    Find the most similar embeddings using cosine similarity.
+
+    Args:
+        query_embedding (np.ndarray): Embedding vector for the query.
+        embeddings (np.ndarray): Matrix of stored embeddings.
+        top_k (int): Number of similar embeddings to retrieve.
+
+    Returns:
+        indices (np.ndarray): Indices of the most similar embeddings.
+        scores (np.ndarray): Similarity scores.
+    """
+
+    sims = cosine_similarity(query_embedding.reshape(1, -1), embeddings)[0]
+    indices = sims.argsort()[::-1][:top_k]
+
+    return indices, sims[indices]
+
+def search_similar_images(query_image_path, embeddings, ids, encoder, device="cuda", top_k=5):
+    """
+    Compute embedding for a query image and retrieve similar images.
+    """
+
+    img = Image.open(query_image_path).convert("RGB")
+    img_np = np.array(img)
+
+    graph_data, segments = image_to_graph_rgb(img_np)
+    graph_data = graph_data.to(device)
+
+    encoder.eval().to(device)
+
+    with torch.no_grad():
+        query_emb = encoder(graph_data).cpu().numpy()
+
+    indices, scores = find_similar_embeddings(query_emb, embeddings, top_k)
+
+    return ids[indices], scores
 
 
 def main():

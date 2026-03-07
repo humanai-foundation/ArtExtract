@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
 
 from scipy import ndimage
 from skimage import graph, segmentation, filters
@@ -104,6 +105,10 @@ def extract_node(image, segments, target_feature_dim=None):
             min_val = np.min(region_pixels, axis=0)
             max_val = np.max(region_pixels, axis=0)
 
+            # compute texture feature using gradient magnitude
+            grad = np.gradient(region_pixels.astype(float), axis=0)
+            texture_val = np.mean(np.abs(grad), axis=0)
+
             # Handle NaN and Inf values
             mean_val = np.nan_to_num(mean_val, nan=0.0, posinf=0.0, neginf=0.0)
             std_val = np.nan_to_num(std_val, nan=0.0, posinf=0.0, neginf=0.0)
@@ -116,7 +121,14 @@ def extract_node(image, segments, target_feature_dim=None):
             center_yx = np.nan_to_num(center_yx, nan=0.0, posinf=0.0, neginf=0.0)
 
             # Construct the feature vector
-            feature_vec = np.concatenate([mean_val, std_val, min_val, max_val, center_yx]) # Multichannel image (H, W, C)
+            feature_vec = np.concatenate([
+                mean_val,
+                std_val,
+                min_val,
+                max_val,
+                texture_val,
+                center_yx
+            ])
             # Ensure the feature vector has the correct length
             features[i, :feature_vec.shape[0]] = feature_vec[:feature_dim]
 
@@ -270,3 +282,21 @@ def image_to_graph_rgb(image, n_segments=5000, compactness=1, normalize_features
     segments = segmentation.slic(image_slic, n_segments=n_segments, compactness=compactness, channel_axis=channel_axis)
 
     return image_to_graph_infer(image, segments, normalize_features, target_feature_dim), segments
+
+def visualize_segments(image, segments):
+    """
+    Visualize the SLIC superpixel segmentation used for graph construction.
+    This utility overlays the segmentation boundaries on the original image
+    to help inspect how the painting is partitioned into graph nodes.
+    """
+
+    plt.figure(figsize=(6, 6))
+    plt.imshow(image)
+
+    # overlay superpixel boundaries
+    plt.contour(segments, colors="red", linewidths=0.5)
+
+    plt.title("Superpixel Graph Segmentation")
+    plt.axis("off")
+
+    plt.show()

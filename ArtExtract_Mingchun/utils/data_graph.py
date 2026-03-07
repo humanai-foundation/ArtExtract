@@ -55,7 +55,11 @@ class GraphSiameseDataset(Dataset):
         # --------RGB image--------
         img_name = self.images[idx]
         img_path = os.path.join(self.images_dir, img_name)
-        image = Image.open(img_path).convert('RGB')
+        image = Image.open(path)
+
+        # convert grayscale images to RGB
+        if image.mode != "RGB":
+            image = image.convert("RGB")
         if self.transform_img:
             image = self.transform_img(image) # (C, H, W)
         if isinstance(image, torch.Tensor):

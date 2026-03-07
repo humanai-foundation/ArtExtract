@@ -43,6 +43,20 @@ def overlay_node(image, segments, node_importance, alpha=0.5, cmap='jet'):
 
     return overlay
 
+def save_overlay(image, heatmap, save_path):
+    """
+    Save an overlay visualization of the heatmap on the image.
+    Useful for inspecting hidden structures detected by the model.
+    """
+
+    plt.figure(figsize=(6, 6))
+    plt.imshow(image)
+    plt.imshow(heatmap, cmap="jet", alpha=0.5)
+    plt.axis("off")
+
+    plt.savefig(save_path)
+    plt.close()
+
 def extract_hidden_art(model, data_loader, device, save_dir=None, mode='diff', alpha=0.5):
     """Extract hidden art features from the model and visualize them.
     Args:
