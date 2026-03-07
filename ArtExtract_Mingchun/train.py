@@ -115,7 +115,6 @@ def main():
     val_losses = []
     patience = 10  # Early stopping patience counter
     patience_counter = 0
-    early_stopping = False
     
     # Train the model
     for epoch in range(50):  # Example: train for 10 epochs
