@@ -258,3 +258,12 @@ def load_inference_datasets(val_path, batch_size):
 
     val_loader = DataLoader(val_dataset, batch_size, shuffle=False, collate_fn=inference_collate_fn)
     return val_loader
+def load_inference_datasets(val_path, batch_size):
+    val_images_dir = os.path.join(val_path, 'rgb_images')
+    val_masks_dir = os.path.join(val_path, 'ms_masks')
+
+    val_img_transform = transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+    ])
+
