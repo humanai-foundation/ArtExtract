@@ -24,6 +24,10 @@ class EvalMetrics(nn.Module):
         self.ssim_metric = ssim(data_range=1.0)
 
     def psnr(self, output, target):
+        if output.shape != target.shape:
+            raise ValueError(
+                f"Shape mismatch: output has shape {output.shape}, target has shape {target.shape}"
+            )
         # Compute MSE per channel
         mse_per_channel = torch.mean((target - output) ** 2, dim=[0, 2, 3])  # MSE per channel
         
